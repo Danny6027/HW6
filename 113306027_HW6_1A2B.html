@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>113306027_HW6_1A2B</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+
+        #history {
+            margin-top: 20px;
+        }
+
+        table {
+            margin: 10px auto;
+            border-collapse: collapse;
+            width: 50%;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f4f4f4;
+        }
+
+        input {
+            padding: 8px;
+            width: 200px;
+        }
+
+        button {
+            padding: 8px 15px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>113306027_HW6_1A2B</h1>
+
+    <div>
+        <input type="text" id="userInput" placeholder="輸入4個不重複數字">
+        <button onclick="checkAnswer()">提交答案</button>
+    </div>
+
+    <div id="history">
+        <h2>作答紀錄</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>輸入的數字</th>
+                    <th>結果</th>
+                </tr>
+            </thead>
+            <tbody id="recordTable">
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        let answer = generateAnswer();
+        let attempts = 0;
+
+        function generateAnswer() {
+            const digits = Array.from({ length: 10 }, (_, i) => i);
+            const result = [];
+            while (result.length < 4) {
+                const randomIndex = Math.floor(Math.random() * digits.length);
+                result.push(digits.splice(randomIndex, 1)[0]);
+            }
+            return result;
+        }
+
+        function checkAnswer() {
+            const userInput = document.getElementById('userInput').value;
+
+            // 驗證輸入格式
+            if (!/^[0-9]{4}$/.test(userInput)) {
+                alert('請輸入4個數字！');
+                return;
+            }
+
+            const userArray = userInput.split('').map(Number);
+            if (new Set(userArray).size !== 4) {
+                alert('數字不能重複！');
+                return;
+            }
+
+            // 計算XAYB
+            let a = 0;
+            let b = 0;
+            userArray.forEach((digit, index) => {
+                if (answer[index] === digit) {
+                    a++;
+                } else if (answer.includes(digit)) {
+                    b++;
+                }
+            });
+
+            attempts++;
+            const resultText = `${a}A${b}B`;
+            updateHistory(userInput, resultText);
+
+            if (a === 4) {
+                alert(`恭喜答對了！您總共嘗試了 ${attempts} 次。`);
+                resetGame();
+            }
+
+            document.getElementById('userInput').value = '';
+        }
+
+        function updateHistory(guess, result) {
+            const table = document.getElementById('recordTable');
+            const row = document.createElement('tr');
+
+            row.innerHTML = `
+                <td>${attempts}</td>
+                <td>${guess}</td>
+                <td>${result}</td>
+            `;
+
+            table.appendChild(row);
+        }
+
+        function resetGame() {
+            answer = generateAnswer();
+            attempts = 0;
+            document.getElementById('recordTable').innerHTML = '';
+            alert('遊戲已重置，請重新開始！');
+        }
+    </script>
+</body>
+</html>
